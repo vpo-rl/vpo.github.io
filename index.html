@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <script type="text/javascript" id="MathJax-script" async
+  src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+</script>
+
+
+
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Beyond Binary Rewards: RL for Calibrated LMs">
+  <meta name="keywords" content="Beyond Binary Rewards: RL for Calibrated LMs">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Beyond Binary Rewards: RL for Calibrated LMs</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+  <link rel="icon" href="./static/images/favicon.svg">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+
+
+
+  
+
+
+
+  <style>
+    .scroll-box {
+      max-height: 9em; /* 4 lines * 1.5em line-height */
+      overflow-y: scroll;
+      background-color: #f9f9f9;
+      padding: 12px;
+      margin: 10px 0;
+      border-left: 4px solid #ccc;
+      font-family: inherit;
+      white-space: pre-wrap;
+      line-height: 1;
+      scrollbar-gutter: stable;
+      font-size: 0.85em; /* smaller font */
+
+    }
+
+    .tag-label {
+      font-weight: bold;
+      color: #333;
+    }
+  
+    /* Optional: customize scrollbar for WebKit browsers */
+    .scroll-box::-webkit-scrollbar {
+      width: 8px;
+    }
+  
+    .scroll-box::-webkit-scrollbar-thumb {
+      background-color: #ccc;
+      border-radius: 4px;
+    }
+  
+    .scroll-box::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .math-scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  max-width: 100%;
+}
+
+  </style>
+  
+  
+  <style>
+    .gray-box {
+      background-color: #f5f5f5;
+      padding: 12px;
+      margin: 10px 0;
+      border-left: 4px solid #bbb;
+      font-family: inherit;
+      line-height: 1;
+      font-size: 0.85em; /* smaller font */
+
+    }
+  
+    .tag-label {
+      font-weight: bold;
+      color: #333;
+    }
+
+
+    .menu-list a {
+  font-size: 0.95em;
+  padding: 0.4em 0;
+}
+.menu-label {
+  font-size: 0.8em;
+  color: #888;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+  </style>
+  
+
+</head>
+
+
+
+
+<body>
+
+
+
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+
+    
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-2 publication-title">Beyond Binary Rewards:<br>Training LMs to Reason About Their Uncertainty</h1>
+        </div>
+      </div>
+
+
+
+
+
+
+
+      <div class="columns" style="align-items: center; margin-left: 0;">
+        <div class="column is-narrow" style="padding-right: 20px; margin-left: -10px;">
+          <img src="assets/images/logo.png" alt="Logo" style="height: 120px;">
+        </div>
+        <div class="column" style="padding-left: 0;">
+          <div class="is-size-6 publication-authors" style="margin-bottom: 1px;">
+            <span class="author-block">
+              <a href="https://damanimehul.github.io/">Mehul Damani*</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://ishapuri.github.io/">Isha Puri*</a><sup>1</sup>,</span>
+            <span class="author-block">
+              <a href="https://www.stewyslocum.com/">Stewart Slocum</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://idanshen.github.io/">Idan Shenfeld</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://scholar.google.com/citations?user=8b8IhUYAAAAJ&hl=en">Leshem Choshen</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://people.csail.mit.edu/yoonkim/">Yoon Kim</a><sup>1</sup>,
+            </span>
+            <span class="author-block">
+              <a href="https://www.mit.edu/~jda/">Jacob Andreas</a><sup>1</sup>
+            </span>
+          </div>
+      
+          <div class="is-size-6 publication-authors" style="margin-bottom: 1px;">
+            <span class="author-block"><sup>*</sup>Equal Contribution,</span>
+            <span class="author-block"><sup>1</sup>MIT CSAIL</span>
+          </div>
+      
+          <div class="publication-links">
+            <span class="link-block">
+              <a href="https://arxiv.org/abs/2507.16806"
+                 class="external-link button is-normal" target="_blank" rel="noopener noreferrer">
+                <span class="icon"><i class="ai ai-arxiv"></i></span>
+                <span>arXiv</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="https://github.com/damanimehul/RLCR"
+                 class="external-link button is-normal" target="_blank" rel="noopener noreferrer">
+                <span class="icon"><i class="fab fa-github"></i></span>
+                <span>Code</span>
+              </a>
+            </span>
+            <span class="link-block">
+              <a href="https://x.com/MehulDamani2/status/1948069173294481877"
+                 class="external-link button is-normal" target="_blank" rel="noopener noreferrer">
+                <span class="icon"><i class="fab fa-twitter"></i></span>
+                <span>Twitter</span>
+              </a>
+
+
+              <!-- Models/Data (Hugging Face) -->
+            <span class="link-block">
+              <a href="https://huggingface.co/collections/mehuldamani/rlcr-68912f9731b0bce30e4cc8c0"
+                class="external-link button is-normal" target="_blank" rel="noopener noreferrer">
+                <span class="icon">
+                  <img src="https://huggingface.co/front/assets/huggingface_logo.svg"
+                      alt="Hugging Face" style="height: 1em; vertical-align: middle;">
+                </span>
+                <span>Models/Data</span>
+            </a>
+          </span>
+        </div>
+ 
+            </span>
+          </div>
+        </div>
+      </div>
+      
+      
+      
+
+
+
+
+
+
+    </div>
+  </div>
+</section>
+
+
+
+
+
+
+<br><br>
+
+
+<div class="columns is-vcentered">
+  <!-- Image Column: Grows to take remaining space -->
+  <div class="column">
+    <div class="image-container" style="text-align: center;">
+      <img src="assets/images/main_fig1.jpg" alt="Main Figure 1" style="max-width: 90%; height: auto;">
+    </div>
+  </div>
+
+  <!-- Narrow TOC Column -->
+  <div class="column is-narrow" style="max-width: 180px; padding-left: 1rem; border-left: 1px solid #ccc;">
+    <div class="table-of-contents">
+      <h3><strong><u>Table of Contents</u></strong></h3>
+      <ul>
+        <li><a href="#intro">Intro</a></li>
+        <li><a href="#examples">Examples</a></li>
+        <li><a href="#our-idea">Method</a></li>
+        <li><a href="#results">Results</a></li>
+        <li><a href="#test-time-scaling">Test-Time Scaling</a></li>
+        <li><a href="#uncertainty-cot">Uncertainty CoT</a></li>
+        <li><a href="#BibTeX">BibTeX</a></li>
+        <li><a href="#Code">Code</a></li>
+        <li><a href="#Slides">Talk Slides</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<section id="why-rlcr" class="section" style="font-family: 'DM Sans', sans-serif;">
+  <div class="container">
+    <div class="box" style="border: 1px solid #ccc; padding: 1.5rem; position: relative;">
+      <a href="#top" style="position: absolute; top: 10px; right: 10px; font-size: 0.8rem;">Back to Top</a>
+      <h2 class="title" style="text-align: center;">Intro</h2>
+
+      <div class="content">
+        <!-- Float image right with appropriate styling -->
+        <img src="assets/images/exampleOutputs.jpg" alt="Example Outputs"
+             style="float: right; width: 70%; margin-left: 20px; margin-bottom: 10px; max-width: 100%; height: auto;">
+
+        <p>
+          Recent advances in reasoning training — particularly <strong>RL with verifiable rewards (RLVR)</strong> — have improved the accuracy of large language models (LLMs). These approaches optimize for correctness, encouraging models to output the right answer when possible.
+        </p>
+
+        <p>
+          However, these same methods tend to produce <strong>overconfident models</strong> that are more prone to <strong>hallucination</strong>. 
+          Because the reward signal focuses solely on final answer correctness, models are incentivized to guess — even when they are uncertain. 
+          This is especially problematic in high-stakes settings like <strong>healthcare</strong> and <strong>law</strong>, where confident errors can be harmful or even dangerous.
+        </p>
+
+        <p>
+          <strong>RLCR</strong> addresses this gap. We introduce a reinforcement learning framework that trains models to reason about their own uncertainty — rewarding not just accuracy, but also calibrated confidence.
+        </p>
+
+        <p>
+          Instead of encouraging blind certainty, RLCR incentivizes models to <em>reflect</em>, evaluate their own outputs, and communicate uncertainty when appropriate.
+          The result is a model that performs better <strong>(higher accuracy ✅)</strong> and knows when it's likely to be wrong <strong>(better calibration 🎯)</strong>.
+        </p>
+
+        <p>
+          In domains where trust, safety, and interpretability matter, this dual optimization — getting the right answer, and knowing when you might not — makes all the difference.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script src="examples-content.js"></script>
+
+<section class="section" id="examples" style="font-family: 'DM Sans', sans-serif;">
+  <div class="container">
+    <div class="box" style="border: 1px solid #ccc; padding: 1.5rem; position: relative;">
+      <a href="#top" style="position: absolute; top: 10px; right: 10px; font-size: 0.8rem;">Back to Top</a>
+      <h2 class="title is-3 has-text-centered">Examples</h2>
+      <p>Below, you can see examples of RLCR in action. Click on the tabs to see the model's confidence and answer for each example and compare it to RLVR and Base model outputs!</p><br>
+      <div class="container">
+        
+        <!-- Gray Question Box -->
+        <div id="question-box" class="box" style="background-color: #f5f5f5;">
+          <div id="question-text">Loading...</div>
+        </div>
+        
+        <div class="columns">
+          <!-- Main Viewing Area -->
+          <div class="column is-9">
+            <div id="viewer-content" class="box" style="min-height: 500px;">
+              <!-- Dynamic content inserted here -->
+            </div>
+          </div>
+
+          <!-- Sidebar Navigation -->
+          <div class="column is-3">
+            <aside class="menu">
+              <p class="menu-label">Examples</p>
+              <ul class="menu-list" id="example-list">
+                <!-- List items populated by JS -->
+              </ul>
+            </aside>
+          </div>
+        </div>
+      </div>
+      <br> These examples are from the RLCR models trained on Math. 
+    </div>
+  </div>
+</section>
+
+<script>
+  // Ensure examples array is available from examples-content.js
+  if (typeof examples === 'undefined') {
+    console.error("The 'examples' array is not loaded. Make sure examples-content.js is included.");
+  } else {
+    const questionBox = document.getElementById('question-text');
+    const viewerContent = document.getElementById('viewer-content');
+    const exampleList = document.getElementById('example-list');
+
+    function loadExample(index) {
+      const ex = examples[index];
+
+      const parts = ex.question.split('\n');
+      const questionLine = parts[0].trim();
+      const groundTruthLine = parts.length > 1 ? parts[1].trim() : "";
+
+      // Better rendering: no <strong> wrapping inline LaTeX
+      const questionBox = document.getElementById('question-text');
+      questionBox.innerHTML = `
+        <div><strong>Question:</strong> <span class="math-question">${questionLine}</span></div>
+        <div><strong>Ground Truth Answer:</strong> <span class="math-answer">${groundTruthLine.replace('Ground Truth Answer: ', '')}</span></div>
+      `;
+
+      const viewerContent = document.getElementById('viewer-content');
+      viewerContent.innerHTML = ex.content;
+
+      // Highlight active link
+      document.querySelectorAll('.example-link').forEach(link => link.classList.remove('is-active'));
+      const activeLink = document.querySelector(`[data-index="${index}"]`);
+      if (activeLink) activeLink.classList.add('is-active');
+
+      // Force MathJax to re-typeset all updated math
+      if (window.MathJax) {
+        MathJax.typeset();
+      }
+    }
+
+    // Populate sidebar
+    examples.forEach((ex, i) => {
+      const li = document.createElement('li');
+      li.innerHTML = `<a href="#" class="example-link ${i === 0 ? 'is-active' : ''}" data-index="${i}">${ex.title}</a>`;
+      exampleList.appendChild(li);
+    });
+
+    // Setup listeners
+    document.querySelectorAll('.example-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const index = parseInt(e.target.getAttribute('data-index'));
+        loadExample(index);
+      });
+    });
+
+    // Load first example
+    loadExample(0);
+  }
+</script>
+
+<section id="our-idea" class="section" style="font-family: 'DM Sans', sans-serif;">
+  <div class="container">
+    <div class="box" style="border: 1px solid #ccc; padding: 1.5rem; position: relative;">
+      <a href="#top" style="position: absolute; top: 10px; right: 10px; font-size: 0.8rem;">Back to Top</a>
+      <h2 class="title is-3" style="text-align: center;" id="our-idea">Method</h2>
+
+      <div class="content">
+        <p><strong>RLCR makes a simple shift:</strong> instead of rewarding only correctness, we reward both accuracy and calibrated confidence.</p>
+
+        <ul>
+          <li>💡 <strong>We reward models for being right <em>and</em> for knowing when they're right.</strong></li>
+          <li>💡 <strong>We move uncertainty reasoning into training</strong> — teaching the model to reflect on its own uncertainty while solving the task.</li>
+          <li>💡 <strong>With a simple tweak to the reward function</strong>, RLCR enables LLMs to improve both performance and self-awareness.</li>
+        </ul>
+
+        <p>
+          During training, the model reasons jointly about the <strong>task</strong> and its own <strong>uncertainty</strong>, 
+          producing both an <strong>answer</strong> and a <strong>confidence estimate</strong>.
+        </p>
+
+        <p>
+          Our reward combines two terms:
+        </p>
+
+        <ul>
+          <li>🎯 <strong>Correctness</strong> — Is the answer right?</li>
+          <li>📏 <strong>Calibration</strong> — Does the confidence reflect actual correctness?</li>
+        </ul>
+
+        <p>
+          Confidently wrong or uncertainly right responses are penalized. This encourages models to learn not just what to answer, but how sure to be.
+        </p>
+
+        <div class="columns is-centered mt-5">
+          <div class="column has-text-centered">
+            <img src="assets/images/reward_fns.jpeg" alt="Reward Functions" style="max-width: 100%;">
+          </div>
+        </div>
+        <p>In RLCR, the reward for giving an incorrect answer is never better than the reward for giving a correct answer, which prevents models from losing accuracy.</p>
+
+        <!-- Math Toggle Box -->
+        <div class="box" style="border: 1px solid #ccc; padding: 1.5rem; position: relative;">
+          <a href="#top" style="position: absolute; top: 10px; right: 10px; font-size: 0.8rem;">Back to Top</a>
+          <!-- Tabs -->
+          <div class="tabs is-toggle is-toggle-rounded is-centered mb-4">
+            <ul>
+              <li class="is-active" id="tab-intuitive" onclick="showMath('intuitive')"><a>Intuitive Equation</a></li>
+              <li id="tab-symbolic" onclick="showMath('symbolic')"><a>Symbolic Equation</a></li>
+            </ul>
+          </div>
+
+          <!-- Math Content -->
+          <div id="intuitive-math" class="math-view fade-math">
+            <p><strong>Traditional RLVR reward:</strong></p>
+            <div class="math-scroll">
+              <p>$$
+              R_{\text{RLVR}} = \text{Correctness} = \mathbb{1}(\text{prediction} = \text{label})
+              $$</p>
+            </div>
+
+            <p class="mt-4"><strong>RLCR reward:</strong></p>
+            <div class="math-scroll">
+              <p>$$
+              R_{\text{RLCR}} = \text{Correctness} - \left( \text{Confidence} - \text{Correctness} \right)^2
+              $$</p>
+            </div>
+
+            <p>
+              where <strong>Correctness</strong> is 1 if the prediction is correct, 0 otherwise; and <strong>Confidence</strong> is the model’s self-estimated probability that its prediction is correct.
+            </p>
+          </div>
+
+          <div id="symbolic-math" class="math-view fade-math is-hidden">
+            <p><strong>Traditional RLVR reward:</strong></p>
+            <div class="math-scroll">
+              <p>$$
+              R_{\text{RLVR}} = \mathbb{1}(\hat{y} = y)
+              $$</p>
+            </div>
+
+            <p class="mt-4"><strong>RLCR reward:</strong></p>
+            <div class="math-scroll">
+              <p>$$
+              R_{\text{RLCR}} = \mathbb{1}(\hat{y} = y) - \left( \hat{q} - \mathbb{1}(\hat{y} = y) \right)^2
+              $$</p>
+            </div>
+
+            <p>
+              where \( \hat{y} \) is the model’s prediction, \( y \) is the ground truth, and \( \hat{q} \) is the model’s confidence estimate.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <br>
+      <p><strong>What We Prove:</strong></p>
+      <p>✅ RLCR provably optimizes for both accuracy & calibration.</p>
+      <p>✅ Calibration comes at no cost to accuracy.</p>
+      <p>✅ Works with any bounded proper scoring rule — we use the Brier score.</p>
+    </div>
+</section>
+
+<!-- MathJax -->
+<script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<!-- Style for fade, scroll, and tabs -->
+<style>
+  .fade-math {
+    transition: opacity 0.4s ease;
+  }
+  .is-hidden {
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+    pointer-events: none;
+    position: absolute;
+  }
+  .math-view {
+    opacity: 1;
+    position: relative;
+  }
+  .math-scroll {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
+  }
+  .math-scroll p {
+    white-space: nowrap;
+  }
+</style>
+
+<!-- JavaScript Logic -->
+<script>
+  function showMath(mode) {
+    const intuitiveTab = document.getElementById('tab-intuitive');
+    const symbolicTab = document.getElementById('tab-symbolic');
+    const intuitiveMath = document.getElementById('intuitive-math');
+    const symbolicMath = document.getElementById('symbolic-math');
+
+    if (mode === 'intuitive') {
+      intuitiveTab.classList.add('is-active');
+      symbolicTab.classList.remove('is-active');
+      intuitiveMath.classList.remove('is-hidden');
+      symbolicMath.classList.add('is-hidden');
+    } else {
+      symbolicTab.classList.add('is-active');
+      intuitiveTab.classList.remove('is-active');
+      symbolicMath.classList.remove('is-hidden');
+      intuitiveMath.classList.add('is-hidden');
+    }
+
+    if (window.MathJax) MathJax.typeset();
+  }
+</script>
+
+<section id="results" class="section" style="font-family: 'DM Sans', sans-serif;">
+  <div class="container">
+    <div class="box" style="border: 1px solid #ccc; padding: 1.5rem; position: relative;">
+      <a href="#top" style="position: absolute; top: 10px; right: 10px; font-size: 0.8rem;">Back to Top</a>
+      <h2 class="title is-3 has-text-centered">Results 📊</h2>
+
+      <p>
+        On diverse QA & math benchmarks (both in-domain and out-of-distribution):
+      </p>
+
+      <ul>
+        <li>✨ <strong>Accuracy</strong> stays on par (or better) than RL baselines, with <strong>calibration error reduced by up to 90%</strong>.</li>
+        <li>✨ Outperforms <strong>post-hoc classifiers & probes</strong> on calibration.</li>
+        <li>✨ <strong>RLVR degrades calibration</strong> in OOD tasks, while <strong>RLCR significantly improves it</strong>.</li>
+      </ul>
+
+      <div class="image-container" style="text-align: center; margin: 20px 0;">
+        <img src="assets/images/results.jpeg" alt="Results Chart" style="max-width: 100%; height: auto;">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="test-time-scaling" class="section" style="font-family: 'DM Sans', sans-serif;">
+  <div class="container">
+    <div class="box has-text-centered" style="border: 1px solid #ccc; padding: 1.5rem; position: relative;">
+      <a href="#top" style="position: absolute; top: 10px; right: 10px; font-size: 0.8rem;">Back to Top</a>
+      <h2 class="title is-3">Can confidence scores help at test time? 🚀</h2>
+
+      <p>
+        Yes — confidence estimates can be directly integrated into <strong>test-time scaling strategies</strong> to improve performance when additional compute is available.
+      </p>
+
+      <p>We explore two simple yet effective techniques:</p>
+      <ul>
+        <li><strong>Max-Confidence Selection</strong>: Choose the response with the highest self-reported confidence.</li>
+        <li><strong>Confidence-Weighted Majority Voting</strong>: Aggregate multiple responses, weighting each vote by its confidence score.</li>
+      </ul>
+
+      <p>
+        These strategies yield <strong>better accuracy and calibration</strong> as compute scales. 📈
+      </p>
+
+      <div class="image-container" style="text-align: center; margin: 20px 0;">
+        <img src="assets/images/inf_scaling.png" alt="Inference Scaling Strategies" style="max-width: 100%; height: auto;">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="uncertainty-cot" class="section" style="font-family: 'DM Sans', sans-serif;">
+  <div class="container">
+    <div class="box" style="border: 1px solid #ccc; padding: 1.5rem; position: relative;">
+      <a href="#top" style="position: absolute; top: 10px; right: 10px; font-size: 0.8rem;">Back to Top</a>
+      <h2 class="title is-3 has-text-centered">Does Explicitly Reasoning About Uncertainty Help? 🧠</h2>
+
+      <p>
+        To investigate the impact of uncertainty reasoning within the chain-of-thought (CoT), we trained two types of classifiers:
+      </p>
+      <br>
+      <li><strong>Baseline:</strong> Trained on model solutions and final answers.</li>
+      <li><strong>Analysis:</strong> Trained on the same, but with explicit uncertainty reasoning included in the CoT.</li>
+      
+      <br>
+      <p>
+        <strong>Result:</strong> The analysis classifier <strong>outperformed</strong> the baseline, particularly for <strong>smaller model sizes</strong>.  
+        Larger models can infer confidence from solutions alone, but smaller ones benefit from having uncertainty reasoning made explicit.
+      </p>
+
+      <br>
+      <p>
+        🔍 <strong>Classifier capacity shapes the optimal CoT content</strong> — a key insight for future work in prompting and model alignment.
+      </p>
+
+      <div class="image-container" style="text-align: center; margin: 20px 0;">
+        <img src="assets/images/classifier.png" alt="Classifier Results" style="max-width: 100%; height: auto;">
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="BibTeX" style="font-family: 'DM Sans', sans-serif; border: 1px solid #ccc; border-radius: 8px; padding: 1.5rem; position: relative;">
+  <a href="#top" style="position: absolute; top: 10px; right: 10px; font-size: 0.8rem;">Back to Top</a>
+  <div class="container is-max-desktop content">
+    <h2 class="title" style="text-align: center;">BibTeX</h2>
+    <pre style="background-color: #bbb9b98b; padding: 15px; border-radius: 5px; border: 1px solid #ccc;"><code>@misc{damani2025binaryrewardstraininglms,
+  title={Beyond Binary Rewards: Training LMs to Reason About Their Uncertainty},
+  author={Mehul Damani and Isha Puri and Stewart Slocum and Idan Shenfeld and Leshem Choshen and Yoon Kim and Jacob Andreas},
+  year={2025},
+  eprint={2507.16806},
+  archivePrefix={arXiv},
+  primaryClass={cs.LG},
+  url={https://arxiv.org/abs/2507.16806},
+}</code></pre>
+  </div>
+</section>
+
+<br><br>
+
+<section class="section" id="Code" style="font-family: 'DM Sans', sans-serif; border: 1px solid #ccc; border-radius: 8px; padding: 1.5rem; position: relative;">
+  <a href="#top" style="position: absolute; top: 10px; right: 10px; font-size: 0.8rem;">Back to Top</a>
+  <div class="container is-max-desktop content">
+    <h2 class="title" style="text-align: center;">Code</h2>
+    <div class="columns">
+      <div class="column">
+        <img src="https://github-readme-stats.vercel.app/api/pin/?username=damanimehul&repo=RLCR" alt="RLCR repo card" />
+      </div>
+      <div class="column">
+        <p><br>For all code, models, and data, check out the <a href="https://github.com/damanimehul/RLCR">RLCR GitHub Repo</a>. We provide a detailed README with instructions for setting up, training, and evaluating the model.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+<br><br>
+
+
+
+<section id="Slides" class="section" style="font-family: 'DM Sans', sans-serif;">
+  <div class="box" style="border:1px solid #ccc; padding:1.5rem; position:relative; height:90vh; overflow:hidden;">
+    <a href="#top" style="position:absolute; top:10px; right:10px; font-size:0.8rem;">Back to Top</a>
+    <h2 class="title is-3 has-text-centered">Slides</h2>
+  
+    <div style="position:absolute; inset:4rem 1.5rem 1.5rem 1.5rem;"> <!-- leaves room for title/padding -->
+      <iframe
+        src="assets/pdfs/rlcr_talk_draft1.pdf#toolbar=0&navpanes=0&scrollbar=0"
+        style="width:100%; height:100%; border:0; display:block;"
+        frameborder="0"
+        oncontextmenu="return false">
+      </iframe>
+    </div>
+  </div>
+  
+</section>
+
+
+
+
+
+
+</body>
+</html>
